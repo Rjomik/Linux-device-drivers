@@ -48,4 +48,4 @@ module_exit(helloExit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Rjomik");
-MODULE_DESCRIPTION("Module for testing logging types");
+MODULE_DESCRIPTION("Module for testing module parameters");
