@@ -1,0 +1,1 @@
+insmod param.ko intParam=77 boolParam=1 Exposed_name='"User string"' integerArray=9,8,7,6,5,4,3,2,1
