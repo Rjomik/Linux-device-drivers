@@ -1,4 +1,4 @@
-#Basic info
+# Basic info
 if no SLAB_NO_MERGE use the fake constructor in kmem_cache_create
 
 GFP_KERNEL = 
@@ -9,6 +9,6 @@ __GFP_FS = access filesystem abstraction
 ___GFP_KSWAPD_RECLAIM = wake up kswapd daemon
 ___GFP_DIRECT_RECLAIM = stop execution of current thread if kswapd is slow
 
-#Commands
+# Commands
 cat slabinfo
 cat meminfo
