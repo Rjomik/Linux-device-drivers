@@ -3,6 +3,7 @@
 #include <linux/kernel.h> //printk
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
+#include <linux/timer.h>
 
 #define PROCFS_NAME "GPIO Button interrupt handling" 
 #define SIZE 1024
@@ -16,12 +17,17 @@ static int led_gpio = (GPIO_OFFSET + ALLWINNER_PC_OFFSET + LED_GPIO);
 static int button_gpio = (GPIO_OFFSET + ALLWINNER_PC_OFFSET + BUTTON_GPIO);
 
 static int irqNum = 0;
-
+struct timer_list debounceTimer;
+#define DEBOUNCE_DELAY_MS 20
 static irqreturn_t buttonHandler(int irq, void *dev)
 {
-    pr_alert("Button was pressed\n");
-    gpio_set_value(led_gpio, !gpio_get_value(led_gpio));
+    mod_timer(&debounceTimer, jiffies+msecs_to_jiffies(DEBOUNCE_DELAY_MS));
     return IRQ_HANDLED;
+}
+
+static void DebounceCallback(struct timer_list *tm){
+    pr_info("Setting button value\n");
+    gpio_set_value(led_gpio, !gpio_get_value(led_gpio));
 }
 
 static int __init helloInit(void)
@@ -62,6 +68,8 @@ static int __init helloInit(void)
 
     pr_alert("The interrupt number is: %d\n", irqNum);
 
+    timer_setup(&debounceTimer, DebounceCallback, 0);
+
     printk(KERN_INFO "Successfully loaded module %s\n", PROCFS_NAME);
     return 0; 
 }
@@ -72,6 +80,7 @@ static void __exit helloExit(void)
     gpio_free(led_gpio);
     gpio_free(button_gpio);
     free_irq(irqNum, NULL);
+    del_timer_sync(&debounceTimer);
     printk(KERN_INFO "Successfully unloaded module %s\n", PROCFS_NAME);
 }
 module_init(helloInit);
